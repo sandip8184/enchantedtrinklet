@@ -1,0 +1,221 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>EnchantedTrinklet - Handmade Bracelets</title>
+  <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@400;600&family=Pacifico&display=swap" rel="stylesheet">
+  <style>
+    body {
+      font-family: 'Quicksand', sans-serif;
+      margin: 0;
+      background: #fff9f9;
+      color: #333;
+    }
+    header {
+      background-color: #ffe4ec;
+      padding: 2rem;
+      text-align: center;
+    }
+    header h1 {
+      font-family: 'Pacifico', cursive;
+      font-size: 3rem;
+      margin: 0;
+      color: #d15b8f;
+    }
+    header p {
+      font-size: 1.2rem;
+      margin-top: 0.5rem;
+    }
+    nav {
+      background-color: #ffc5da;
+      padding: 1rem;
+      text-align: center;
+    }
+    nav a {
+      margin: 0 1rem;
+      text-decoration: none;
+      color: #333;
+      font-weight: 600;
+    }
+    section {
+      padding: 2rem;
+    }
+    .products {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 1.5rem;
+      justify-content: center;
+    }
+    .product-card {
+      background: #fff;
+      border-radius: 12px;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+      padding: 1rem;
+      max-width: 200px;
+      text-align: center;
+    }
+    .product-card img {
+      width: 100%;
+      height: 150px;
+      object-fit: cover;
+      border-radius: 8px;
+    }
+    footer {
+      background-color: #ffe4ec;
+      padding: 1rem;
+      text-align: center;
+      font-size: 0.9rem;
+    }
+    form input, form textarea {
+      width: 100%;
+      padding: 0.8rem;
+      margin-bottom: 1rem;
+      border: 1px solid #ccc;
+      border-radius: 8px;
+      font-family: inherit;
+    }
+    form button {
+      background-color: #d15b8f;
+      color: #fff;
+      padding: 0.8rem 1.2rem;
+      border: none;
+      border-radius: 8px;
+      font-weight: 600;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <h1>EnchantedTrinklet</h1>
+    <p>Handmade bracelets by young creators ✨</p>
+  </header>
+
+  <nav>
+    <a href="#about">About</a>
+    <a href="#shop">Shop</a>
+    <a href="#contact">Contact</a>
+    <a href="#" onclick="toggleCart()">🛒 Cart (<span id="cart-count">0</span>)</a>
+  </nav>
+
+  <section id="about">
+    <h2>Our Story</h2>
+    <p><strong>At EnchantedTrinklet</strong>, every bracelet tells a story — a story of joy, creativity, and a little bit of everyday magic.</p>
+    <p>What started as a love for crafting quickly became a journey of turning beads and charms into beautiful, meaningful treasures. Each bracelet is handmade with heart and inspired by colors we adore, moments that make us smile, and the sparkle of true friendship.</p>
+    <p>Our bracelets are more than accessories — they’re tiny reminders to stay playful, stay kind, and stay enchanted. Whether you're gifting a trinklet or keeping one close to your heart, we hope it brings a touch of happiness to your day. ✨</p>
+  </section>
+
+  <section id="shop">
+    <h2>Shop Bracelets</h2>
+    <div class="products">
+      <div class="product-card">
+        <img src="Soccer.jpeg" alt="Soccer Bracelet" />
+        <h3>Soccer Star</h3>
+        <p>$7.00</p>
+        <button onclick="addToCart('Soccer Star', 7.00)">Add to Cart</button>
+      </div>
+      <div class="product-card">
+        <img src="GENZ.jpeg" alt="EAGLEZ Bracelet" />
+        <h3>Team Spirit</h3>
+        <p>$6.00</p>
+        <button onclick="addToCart('Team Spirit', 6.00)">Add to Cart</button>
+      </div>
+    </div>
+  </section>
+
+  <section id="contact">
+    <h2>Contact Us</h2>
+    <form action="#" method="POST">
+      <input type="text" placeholder="Your Name" required />
+      <input type="email" placeholder="Your Email" required />
+      <textarea rows="4" placeholder="Message"></textarea>
+      <button type="submit">Send</button>
+    </form>
+  </section>
+
+  <footer>
+    <p>© 2025 EnchantedTrinklet. All rights reserved.</p>
+    <div id="cart" style="display: none; padding: 2rem; background: #fff0f5;">
+      <h2>Your Cart</h2>
+      <ul id="cart-items"></ul>
+      <button onclick="checkout()">Checkout</button>
+    </div>
+
+    <div id="checkout" style="display: none; padding: 2rem; background: #f0faff;">
+      <h2>Complete Your Order</h2>
+      <form onsubmit="submitOrder(event)">
+        <input type="text" placeholder="Your Name" required />
+        <input type="email" placeholder="Your Email" required />
+        <textarea placeholder="Shipping Address" required></textarea>
+        <button type="submit">Place Order</button>
+      </form>
+      <div id="paypal-button-container" style="margin-top: 1rem;"></div>
+    </div>
+  </footer>
+
+  <script src="https://www.paypal.com/sdk/js?client-id=sb&currency=USD"></script>
+  <script>
+    let cart = [];
+
+    function addToCart(name, price) {
+      cart.push({ name, price });
+      document.getElementById('cart-count').textContent = cart.length;
+      alert(name + ' added to cart!');
+    }
+
+    function toggleCart() {
+      const cartSection = document.getElementById('cart');
+      cartSection.style.display = cartSection.style.display === 'none' ? 'block' : 'none';
+      updateCart();
+    }
+
+    function updateCart() {
+      const cartList = document.getElementById('cart-items');
+      cartList.innerHTML = '';
+      cart.forEach(item => {
+        const li = document.createElement('li');
+        li.textContent = `${item.name} - $${item.price.toFixed(2)}`;
+        cartList.appendChild(li);
+      });
+    }
+
+    function checkout() {
+      document.getElementById('cart').style.display = 'none';
+      document.getElementById('checkout').style.display = 'block';
+    }
+
+    function submitOrder(event) {
+      event.preventDefault();
+      alert("Thank you! Your order has been placed.");
+      cart = [];
+      document.getElementById('cart-count').textContent = 0;
+      document.getElementById('checkout').style.display = 'none';
+    }
+
+    paypal.Buttons({
+      createOrder: function(data, actions) {
+        const total = cart.reduce((sum, item) => sum + item.price, 0);
+        return actions.order.create({
+          purchase_units: [{
+            amount: {
+              value: total.toFixed(2)
+            }
+          }]
+        });
+      },
+      onApprove: function(data, actions) {
+        return actions.order.capture().then(function(details) {
+          alert('Thank you ' + details.payer.name.given_name + '! Your payment was successful.');
+          cart = [];
+          document.getElementById('cart-count').textContent = 0;
+          document.getElementById('cart').style.display = 'none';
+          document.getElementById('checkout').style.display = 'none';
+        });
+      }
+    }).render('#paypal-button-container');
+  </script>
+</body>
+</html>
