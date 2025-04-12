@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -85,6 +84,16 @@
       font-weight: 600;
       cursor: pointer;
     }
+    #cart, #checkout {
+      display: none;
+      padding: 2rem;
+      background: #fff0f5;
+      margin: 1rem;
+      border-radius: 12px;
+    }
+    #checkout {
+      background: #f0faff;
+    }
   </style>
 </head>
 <body>
@@ -98,14 +107,20 @@
     <a href="#about">About</a>
     <a href="#shop">Shop</a>
     <a href="#contact">Contact</a>
-    <a href="#" onclick="toggleCart()">🛒 Cart (<span id="cart-count">0</span>)</a>
+    <a href="javascript:void(0)" onclick="toggleCart()">🛒 Cart (<span id="cart-count">0</span>)</a>
   </nav>
 
   <section id="about">
     <h2>Our Story</h2>
-    <p><strong>At EnchantedTrinklet</strong>, every bracelet tells a story — a story of joy, creativity, and a little bit of everyday magic.</p>
-    <p>What started as a love for crafting quickly became a journey of turning beads and charms into beautiful, meaningful treasures. Each bracelet is handmade with heart and inspired by colors we adore, moments that make us smile, and the sparkle of true friendship.</p>
-    <p>Our bracelets are more than accessories — they’re tiny reminders to stay playful, stay kind, and stay enchanted. Whether you're gifting a trinklet or keeping one close to your heart, we hope it brings a touch of happiness to your day. ✨</p>
+    <p>
+      <strong>At EnchantedTrinklet</strong>, every bracelet tells a story — a story of joy, creativity, and a little bit of everyday magic.
+    </p>
+    <p>
+      Our bracelets are handmade with love and inspired by colors we adore, moments that make us smile, and the sparkle of true friendship.
+    </p>
+    <p>
+      They’re tiny reminders to stay playful, kind, and enchanted. Whether you're gifting or keeping one close, we hope it brings a touch of happiness. ✨
+    </p>
   </section>
 
   <section id="shop">
@@ -118,7 +133,7 @@
         <button onclick="addToCart('Soccer Star', 7.00)">Add to Cart</button>
       </div>
       <div class="product-card">
-        <img src="GENZ.jpeg" alt="EAGLEZ Bracelet" />
+        <img src="GENZ.jpeg" alt="Team Spirit Bracelet" />
         <h3>Team Spirit</h3>
         <p>$6.00</p>
         <button onclick="addToCart('Team Spirit', 6.00)">Add to Cart</button>
@@ -136,27 +151,26 @@
     </form>
   </section>
 
+  <div id="cart">
+    <h2>Your Cart</h2>
+    <ul id="cart-items"></ul>
+    <button onclick="checkout()">Checkout</button>
+  </div>
+
+  <div id="checkout">
+    <h2>Complete Your Order</h2>
+    <form onsubmit="submitOrder(event)">
+      <input type="text" placeholder="Your Name" required />
+      <input type="email" placeholder="Your Email" required />
+      <textarea placeholder="Shipping Address" required></textarea>
+      <button type="submit">Place Order</button>
+    </form>
+  </div>
+
   <footer>
     <p>© 2025 EnchantedTrinklet. All rights reserved.</p>
-    <div id="cart" style="display: none; padding: 2rem; background: #fff0f5;">
-      <h2>Your Cart</h2>
-      <ul id="cart-items"></ul>
-      <button onclick="checkout()">Checkout</button>
-    </div>
-
-    <div id="checkout" style="display: none; padding: 2rem; background: #f0faff;">
-      <h2>Complete Your Order</h2>
-      <form onsubmit="submitOrder(event)">
-        <input type="text" placeholder="Your Name" required />
-        <input type="email" placeholder="Your Email" required />
-        <textarea placeholder="Shipping Address" required></textarea>
-        <button type="submit">Place Order</button>
-      </form>
-      <div id="paypal-button-container" style="margin-top: 1rem;"></div>
-    </div>
   </footer>
 
-  <script src="https://www.paypal.com/sdk/js?client-id=sb&currency=USD"></script>
   <script>
     let cart = [];
 
@@ -167,8 +181,10 @@
     }
 
     function toggleCart() {
-      const cartSection = document.getElementById('cart');
-      cartSection.style.display = cartSection.style.display === 'none' ? 'block' : 'none';
+      const cartDiv = document.getElementById('cart');
+      const checkoutDiv = document.getElementById('checkout');
+      cartDiv.style.display = (cartDiv.style.display === 'none' || cartDiv.style.display === '') ? 'block' : 'none';
+      checkoutDiv.style.display = 'none';
       updateCart();
     }
 
@@ -194,28 +210,7 @@
       document.getElementById('cart-count').textContent = 0;
       document.getElementById('checkout').style.display = 'none';
     }
-
-    paypal.Buttons({
-      createOrder: function(data, actions) {
-        const total = cart.reduce((sum, item) => sum + item.price, 0);
-        return actions.order.create({
-          purchase_units: [{
-            amount: {
-              value: total.toFixed(2)
-            }
-          }]
-        });
-      },
-      onApprove: function(data, actions) {
-        return actions.order.capture().then(function(details) {
-          alert('Thank you ' + details.payer.name.given_name + '! Your payment was successful.');
-          cart = [];
-          document.getElementById('cart-count').textContent = 0;
-          document.getElementById('cart').style.display = 'none';
-          document.getElementById('checkout').style.display = 'none';
-        });
-      }
-    }).render('#paypal-button-container');
   </script>
+
 </body>
 </html>
