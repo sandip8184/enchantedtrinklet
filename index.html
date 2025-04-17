@@ -167,51 +167,19 @@
   </footer>
 
   <script type="module">
-    import emailjs from 'https://cdn.emailjs.com/dist/email.min.mjs';
-    emailjs.init("bXNcwcq7RgwHcFkIP"); // Your public key
+    import emailjs from 'https://cdn.emailjs.com/sdk/3.11.0/email.min.mjs';
+
+    emailjs.init("bXNcwcq7RgwHcFkIP");
 
     let cart = [];
 
-    // Add item to cart
-    function addToCart(name, price) {
-      cart.push({ name, price });
-      document.getElementById('cart-count').textContent = cart.length;
-      alert(name + ' added to cart!');
-    }
-
-    // Show/hide cart
-    function toggleCart() {
-      const cartDiv = document.getElementById('cart');
-      const checkoutDiv = document.getElementById('checkout');
-      cartDiv.style.display = (cartDiv.style.display === 'none' || cartDiv.style.display === '') ? 'block' : 'none';
-      checkoutDiv.style.display = 'none';
-      updateCart();
-    }
-
-    // Update cart list
-    function updateCart() {
-      const cartList = document.getElementById('cart-items');
-      cartList.innerHTML = '';
-      cart.forEach(item => {
-        const li = document.createElement('li');
-        li.textContent = `${item.name} - $${item.price.toFixed(2)}`;
-        cartList.appendChild(li);
-      });
-    }
-
-    // Go to checkout
-    function checkout() {
-      document.getElementById('cart').style.display = 'none';
-      document.getElementById('checkout').style.display = 'block';
-    }
-
-    // Handle order form submission
+    // Order form submission
     document.getElementById("order-form").addEventListener("submit", function (event) {
       event.preventDefault();
 
-      const customerName = document.querySelector('#order-form input[name="user_name"]').value;
-      const customerEmail = document.querySelector('#order-form input[name="user_email"]').value;
-      const shippingAddress = document.querySelector('#order-form textarea[name="shipping_address"]').value;
+      const customerName = document.querySelector('input[name="user_name"]').value;
+      const customerEmail = document.querySelector('input[name="user_email"]').value;
+      const shippingAddress = document.querySelector('textarea[name="shipping_address"]').value;
       const orderDetails = cart.map(item => `${item.name} - $${item.price.toFixed(2)}`).join("\n");
       const totalAmount = cart.reduce((total, item) => total + item.price, 0).toFixed(2);
 
@@ -232,6 +200,36 @@
         })
         .catch((err) => alert("Order failed: " + err.text));
     });
+
+    // Make functions globally accessible
+    window.addToCart = function(name, price) {
+      cart.push({ name, price });
+      document.getElementById('cart-count').textContent = cart.length;
+      alert(name + ' added to cart!');
+    }
+
+    window.toggleCart = function() {
+      const cartDiv = document.getElementById('cart');
+      const checkoutDiv = document.getElementById('checkout');
+      cartDiv.style.display = (cartDiv.style.display === 'none' || cartDiv.style.display === '') ? 'block' : 'none';
+      checkoutDiv.style.display = 'none';
+      updateCart();
+    }
+
+    window.checkout = function() {
+      document.getElementById('cart').style.display = 'none';
+      document.getElementById('checkout').style.display = 'block';
+    }
+
+    function updateCart() {
+      const cartList = document.getElementById('cart-items');
+      cartList.innerHTML = '';
+      cart.forEach(item => {
+        const li = document.createElement('li');
+        li.textContent = `${item.name} - $${item.price.toFixed(2)}`;
+        cartList.appendChild(li);
+      });
+    }
   </script>
 
 </body>
