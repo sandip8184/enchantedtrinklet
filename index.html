@@ -167,50 +167,25 @@
   </footer>
 
   <script type="module">
-  import emailjs from 'https://cdn.emailjs.com/dist/email.min.mjs';
+    import emailjs from 'https://cdn.emailjs.com/dist/email.min.mjs';
 
-  emailjs.init("bXNcwcq7RgwHcFkIP");
-
-  // EmailJS send logic
-  window.sendOrder = function () {
-    const customerName = document.querySelector('input[name="user_name"]').value;
-    const customerEmail = document.querySelector('input[name="user_email"]').value;
-    const shippingAddress = document.querySelector('textarea[name="shipping_address"]').value;
-    const orderDetails = cart.map(item => `${item.name} - $${item.price.toFixed(2)}`).join("\n");
-    const totalAmount = cart.reduce((total, item) => total + item.price, 0).toFixed(2);
-
-    const templateParams = {
-      user_name: customerName,
-      user_email: customerEmail,
-      shipping_address: shippingAddress,
-      order_details: orderDetails,
-      total_amount: totalAmount
-    };
-
-    emailjs.send("service_8qrjwza", "template_7o8tt3g", templateParams)
-      .then(() => {
-        alert("Thank you! Your order has been placed.");
-        cart = [];
-        document.getElementById("cart-count").textContent = 0;
-        document.getElementById("checkout").style.display = "none";
-      })
-      .catch((err) => alert("Order failed: " + err.text));
-  };
-</script>
+    emailjs.init("bXNcwcq7RgwHcFkIP"); // ✅ your EmailJS user ID
 
     let cart = [];
 
-    // Order form submission with cart details
+    // 📨 Order form submission
     document.getElementById("order-form").addEventListener("submit", function (event) {
       event.preventDefault();
+      sendOrder();
+    });
 
+    function sendOrder() {
       const customerName = document.querySelector('input[name="user_name"]').value;
       const customerEmail = document.querySelector('input[name="user_email"]').value;
       const shippingAddress = document.querySelector('textarea[name="shipping_address"]').value;
       const orderDetails = cart.map(item => `${item.name} - $${item.price.toFixed(2)}`).join("\n");
       const totalAmount = cart.reduce((total, item) => total + item.price, 0).toFixed(2);
 
-      // EmailJS template parameters
       const templateParams = {
         user_name: customerName,
         user_email: customerEmail,
@@ -219,22 +194,20 @@
         total_amount: totalAmount
       };
 
-      // Send order via EmailJS
       emailjs.send("service_8qrjwza", "template_7o8tt3g", templateParams)
         .then(() => {
           alert("Thank you! Your order has been placed.");
-          cart = []; // Clear cart after order
+          cart = [];
           document.getElementById("cart-count").textContent = 0;
           document.getElementById("checkout").style.display = "none";
         })
         .catch((err) => alert("Order failed: " + err.text));
-    });
+    }
 
     function addToCart(name, price) {
       cart.push({ name, price });
       document.getElementById('cart-count').textContent = cart.length;
-      alert(name + ' has been added to your cart!');
-      updateCart(); // Update cart when an item is added
+      alert(name + ' added to cart!');
     }
 
     function toggleCart() {
@@ -242,12 +215,12 @@
       const checkoutDiv = document.getElementById('checkout');
       cartDiv.style.display = (cartDiv.style.display === 'none' || cartDiv.style.display === '') ? 'block' : 'none';
       checkoutDiv.style.display = 'none';
-      updateCart(); // Ensure cart content is updated when toggling
+      updateCart();
     }
 
     function updateCart() {
       const cartList = document.getElementById('cart-items');
-      cartList.innerHTML = ''; // Clear the existing cart list
+      cartList.innerHTML = '';
       cart.forEach(item => {
         const li = document.createElement('li');
         li.textContent = `${item.name} - $${item.price.toFixed(2)}`;
