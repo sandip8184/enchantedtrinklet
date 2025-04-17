@@ -166,14 +166,44 @@
     <p>© 2025 EnchantedTrinklet. All rights reserved.</p>
   </footer>
 
-  <script type="module">
-    import emailjs from 'https://cdn.emailjs.com/sdk/3.11.0/email.min.mjs';
-
-    emailjs.init("bXNcwcq7RgwHcFkIP");
+  <!-- Load EmailJS and JS logic -->
+  <script src="https://cdn.emailjs.com/sdk/3.11.0/email.min.js"></script>
+  <script>
+    (function () {
+      emailjs.init("bXNcwcq7RgwHcFkIP");
+    })();
 
     let cart = [];
 
-    // Order form submission
+    window.addToCart = function (name, price) {
+      cart.push({ name, price });
+      document.getElementById('cart-count').textContent = cart.length;
+      alert(name + ' added to cart!');
+    };
+
+    window.toggleCart = function () {
+      const cartDiv = document.getElementById('cart');
+      const checkoutDiv = document.getElementById('checkout');
+      cartDiv.style.display = (cartDiv.style.display === 'none' || cartDiv.style.display === '') ? 'block' : 'none';
+      checkoutDiv.style.display = 'none';
+      updateCart();
+    };
+
+    window.checkout = function () {
+      document.getElementById('cart').style.display = 'none';
+      document.getElementById('checkout').style.display = 'block';
+    };
+
+    function updateCart() {
+      const cartList = document.getElementById('cart-items');
+      cartList.innerHTML = '';
+      cart.forEach(item => {
+        const li = document.createElement('li');
+        li.textContent = `${item.name} - $${item.price.toFixed(2)}`;
+        cartList.appendChild(li);
+      });
+    }
+
     document.getElementById("order-form").addEventListener("submit", function (event) {
       event.preventDefault();
 
@@ -200,37 +230,6 @@
         })
         .catch((err) => alert("Order failed: " + err.text));
     });
-
-    // Make functions globally accessible
-    window.addToCart = function(name, price) {
-      cart.push({ name, price });
-      document.getElementById('cart-count').textContent = cart.length;
-      alert(name + ' added to cart!');
-    }
-
-    window.toggleCart = function() {
-      const cartDiv = document.getElementById('cart');
-      const checkoutDiv = document.getElementById('checkout');
-      cartDiv.style.display = (cartDiv.style.display === 'none' || cartDiv.style.display === '') ? 'block' : 'none';
-      checkoutDiv.style.display = 'none';
-      updateCart();
-    }
-
-    window.checkout = function() {
-      document.getElementById('cart').style.display = 'none';
-      document.getElementById('checkout').style.display = 'block';
-    }
-
-    function updateCart() {
-      const cartList = document.getElementById('cart-items');
-      cartList.innerHTML = '';
-      cart.forEach(item => {
-        const li = document.createElement('li');
-        li.textContent = `${item.name} - $${item.price.toFixed(2)}`;
-        cartList.appendChild(li);
-      });
-    }
   </script>
-
 </body>
 </html>
