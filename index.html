@@ -3,41 +3,48 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Enchanted Trinklet - Checkout</title>
-  <link rel="stylesheet" href="styles.css">
-  <script src="https://cdn.emailjs.com/dist/email.min.js"></script>
+  <title>EnchantedTrinklet - Handmade Bracelets</title>
+  <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@400;600&family=Pacifico&display=swap" rel="stylesheet">
+  <script src="https://cdn.emailjs.com/dist/email.min.latest.js"></script> <!-- Updated version -->
   <script>
     // Initialize EmailJS with your user ID
     (function() {
-      emailjs.init("user_XXXXXXXXXXXXXX"); // Replace with your EmailJS user ID
+      emailjs.init("7zW-r2ig6AjlS0dBy"); // Replace with your EmailJS user ID
     })();
 
-    // Example cart array for testing
-    let cart = [
-      { name: "Gold Bracelet", price: 24.99, quantity: 1, image_url: "https://via.placeholder.com/64" },
-      { name: "Silver Ring", price: 19.99, quantity: 2, image_url: "https://via.placeholder.com/64" }
-    ];
+    let cart = [];
 
-    // Cart display function (to show items in the cart)
-    function updateCartDisplay() {
-      const cartCount = document.getElementById("cart-count");
-      const checkoutButton = document.getElementById("checkout");
-      const orderList = document.getElementById("order-list");
+    // Add item to cart
+    function addToCart(name, price) {
+      cart.push({ name, price });
+      document.getElementById('cart-count').textContent = cart.length;
+      alert(name + ' added to cart!');
+    }
 
-      cartCount.textContent = cart.length;
-      checkoutButton.style.display = cart.length > 0 ? "block" : "none";
+    // Toggle cart visibility
+    function toggleCart() {
+      const cartDiv = document.getElementById('cart');
+      const checkoutDiv = document.getElementById('checkout');
+      cartDiv.style.display = (cartDiv.style.display === 'none' || cartDiv.style.display === '') ? 'block' : 'none';
+      checkoutDiv.style.display = 'none';
+      updateCart();
+    }
 
-      // Display ordered items
-      orderList.innerHTML = cart.map(item => `
-        <div class="cart-item">
-          <img src="${item.image_url}" alt="${item.name}" />
-          <div>
-            <p>${item.name}</p>
-            <p>Quantity: ${item.quantity}</p>
-            <p>Price: $${item.price}</p>
-          </div>
-        </div>
-      `).join("");
+    // Update cart display
+    function updateCart() {
+      const cartList = document.getElementById('cart-items');
+      cartList.innerHTML = '';
+      cart.forEach(item => {
+        const li = document.createElement('li');
+        li.textContent = `${item.name} - $${item.price.toFixed(2)}`;
+        cartList.appendChild(li);
+      });
+    }
+
+    // Checkout process
+    function checkout() {
+      document.getElementById('cart').style.display = 'none';
+      document.getElementById('checkout').style.display = 'block';
     }
 
     // Handle order form submission
@@ -47,9 +54,8 @@
       const customerName = document.querySelector('input[name="user_name"]').value;
       const customerEmail = document.querySelector('input[name="user_email"]').value;
       const shippingAddress = document.querySelector('textarea[name="shipping_address"]').value;
-
       const orderDetails = cart.map(item => `${item.name} - $${item.price.toFixed(2)}`).join("\n");
-      const totalAmount = cart.reduce((total, item) => total + item.price * item.quantity, 0).toFixed(2);
+      const totalAmount = cart.reduce((total, item) => total + item.price, 0).toFixed(2);
 
       const templateParams = {
         user_name: customerName,
@@ -64,123 +70,172 @@
         .then(function(response) {
           alert("Thank you! Your order has been placed.");
           cart = [];
-          updateCartDisplay();
+          updateCart();
         }, function(error) {
           alert("Order failed: " + error.text);
         });
     });
   </script>
+  <style>
+    body {
+      font-family: 'Quicksand', sans-serif;
+      margin: 0;
+      background: #fff9f9;
+      color: #333;
+    }
+    header {
+      background-color: #ffe4ec;
+      padding: 2rem;
+      text-align: center;
+    }
+    header h1 {
+      font-family: 'Pacifico', cursive;
+      font-size: 3rem;
+      margin: 0;
+      color: #d15b8f;
+    }
+    header p {
+      font-size: 1.2rem;
+      margin-top: 0.5rem;
+    }
+    nav {
+      background-color: #ffc5da;
+      padding: 1rem;
+      text-align: center;
+    }
+    nav a {
+      margin: 0 1rem;
+      text-decoration: none;
+      color: #333;
+      font-weight: 600;
+    }
+    section {
+      padding: 2rem;
+    }
+    .products {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 1.5rem;
+      justify-content: center;
+    }
+    .product-card {
+      background: #fff;
+      border-radius: 12px;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+      padding: 1rem;
+      max-width: 200px;
+      text-align: center;
+    }
+    .product-card img {
+      width: 100%;
+      height: 150px;
+      object-fit: cover;
+      border-radius: 8px;
+    }
+    footer {
+      background-color: #ffe4ec;
+      padding: 1rem;
+      text-align: center;
+      font-size: 0.9rem;
+    }
+    form input, form textarea {
+      width: 100%;
+      padding: 0.8rem;
+      margin-bottom: 1rem;
+      border: 1px solid #ccc;
+      border-radius: 8px;
+      font-family: inherit;
+    }
+    form button {
+      background-color: #d15b8f;
+      color: #fff;
+      padding: 0.8rem 1.2rem;
+      border: none;
+      border-radius: 8px;
+      font-weight: 600;
+      cursor: pointer;
+    }
+    #cart, #checkout {
+      display: none;
+      padding: 2rem;
+      background: #fff0f5;
+      margin: 1rem;
+      border-radius: 12px;
+    }
+    #checkout {
+      background: #f0faff;
+    }
+  </style>
 </head>
 <body>
-  <div class="container">
-    <header>
-      <h1>Enchanted Trinklet - Checkout</h1>
-    </header>
 
-    <div id="cart" class="cart">
-      <div id="order-list" class="order-list"></div>
-      <div class="cart-summary">
-        <p><strong>Total Items: </strong><span id="cart-count">0</span></p>
-        <button id="checkout" style="display: none;">Proceed to Checkout</button>
+  <header>
+    <h1>EnchantedTrinklet</h1>
+    <p>Handmade bracelets by young creators ✨</p>
+  </header>
+
+  <nav>
+    <a href="#about">About</a>
+    <a href="#shop">Shop</a>
+    <a href="#contact">Contact</a>
+    <a href="javascript:void(0)" onclick="toggleCart()">🛒 Cart (<span id="cart-count">0</span>)</a>
+  </nav>
+
+  <section id="about">
+    <h2>Our Story</h2>
+    <p><strong>At EnchantedTrinklet</strong>, every bracelet tells a story — a story of joy, creativity, and a little bit of everyday magic.</p>
+    <p>Our bracelets are handmade with love and inspired by colors we adore, moments that make us smile, and the sparkle of true friendship.</p>
+    <p>They’re tiny reminders to stay playful, kind, and enchanted. Whether you're gifting or keeping one close, we hope it brings a touch of happiness. ✨</p>
+  </section>
+
+  <section id="shop">
+    <h2>Shop Bracelets</h2>
+    <div class="products">
+      <div class="product-card">
+        <img src="Soccer.jpeg" alt="Soccer Bracelet" />
+        <h3>Soccer Star</h3>
+        <p>$7.00</p>
+        <button onclick="addToCart('Soccer Star', 7.00)">Add to Cart</button>
+      </div>
+      <div class="product-card">
+        <img src="GENZ.jpeg" alt="Team Spirit Bracelet" />
+        <h3>Team Spirit</h3>
+        <p>$6.00</p>
+        <button onclick="addToCart('Team Spirit', 6.00)">Add to Cart</button>
       </div>
     </div>
+  </section>
 
+  <section id="contact">
+    <h2>Contact Us</h2>
+    <form id="contact-form">
+      <input type="text" name="user_name" placeholder="Your Name" required />
+      <input type="email" name="user_email" placeholder="Your Email" required />
+      <textarea name="message" rows="4" placeholder="Message" required></textarea>
+      <button type="submit">Send</button>
+    </form>
+  </section>
+
+  <div id="cart">
+    <h2>Your Cart</h2>
+    <ul id="cart-items"></ul>
+    <button onclick="checkout()">Checkout</button>
+  </div>
+
+  <div id="checkout">
+    <h2>Complete Your Order</h2>
     <form id="order-form">
-      <div class="form-group">
-        <label for="user_name">Name</label>
-        <input type="text" name="user_name" required />
-      </div>
-
-      <div class="form-group">
-        <label for="user_email">Email</label>
-        <input type="email" name="user_email" required />
-      </div>
-
-      <div class="form-group">
-        <label for="shipping_address">Shipping Address</label>
-        <textarea name="shipping_address" required></textarea>
-      </div>
-
-      <div class="form-group">
-        <button type="submit">Place Order</button>
-      </div>
+      <input type="text" name="user_name" placeholder="Your Name" required />
+      <input type="email" name="user_email" placeholder="Your Email" required />
+      <textarea name="shipping_address" placeholder="Shipping Address" required></textarea>
+      <textarea name="order_details" id="order-details" hidden></textarea>
+      <button type="submit">Place Order</button>
     </form>
   </div>
 
-  <style>
-    body {
-      font-family: Arial, sans-serif;
-      background-color: #f0f0f0;
-      margin: 0;
-      padding: 0;
-    }
+  <footer>
+    <p>© 2025 EnchantedTrinklet. All rights reserved.</p>
+  </footer>
 
-    .container {
-      width: 80%;
-      margin: 0 auto;
-      padding: 20px;
-      background-color: #fff;
-    }
-
-    header {
-      text-align: center;
-    }
-
-    .cart {
-      background-color: #f9f9f9;
-      padding: 20px;
-      border-radius: 8px;
-    }
-
-    .cart-summary {
-      margin-top: 20px;
-      text-align: right;
-    }
-
-    .cart-item {
-      display: flex;
-      margin-bottom: 20px;
-    }
-
-    .cart-item img {
-      width: 64px;
-      height: 64px;
-      margin-right: 20px;
-    }
-
-    .cart-item div {
-      flex: 1;
-    }
-
-    .form-group {
-      margin-bottom: 15px;
-    }
-
-    .form-group label {
-      display: block;
-      margin-bottom: 5px;
-    }
-
-    .form-group input,
-    .form-group textarea {
-      width: 100%;
-      padding: 8px;
-      border: 1px solid #ddd;
-      border-radius: 4px;
-    }
-
-    .form-group button {
-      padding: 10px 20px;
-      background-color: #458500;
-      color: white;
-      border: none;
-      cursor: pointer;
-      border-radius: 4px;
-    }
-
-    .form-group button:hover {
-      background-color: #365e2f;
-    }
-  </style>
 </body>
 </html>
