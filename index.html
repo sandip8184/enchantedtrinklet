@@ -166,9 +166,37 @@
     <p>© 2025 EnchantedTrinklet. All rights reserved.</p>
   </footer>
 
-  <script src="https://cdn.emailjs.com/dist/email.min.js"></script>
-  <script>
-    emailjs.init("bXNcwcq7RgwHcFkIP");
+  <script type="module">
+  import emailjs from 'https://cdn.emailjs.com/dist/email.min.mjs';
+
+  emailjs.init("bXNcwcq7RgwHcFkIP");
+
+  // EmailJS send logic
+  window.sendOrder = function () {
+    const customerName = document.querySelector('input[name="user_name"]').value;
+    const customerEmail = document.querySelector('input[name="user_email"]').value;
+    const shippingAddress = document.querySelector('textarea[name="shipping_address"]').value;
+    const orderDetails = cart.map(item => `${item.name} - $${item.price.toFixed(2)}`).join("\n");
+    const totalAmount = cart.reduce((total, item) => total + item.price, 0).toFixed(2);
+
+    const templateParams = {
+      user_name: customerName,
+      user_email: customerEmail,
+      shipping_address: shippingAddress,
+      order_details: orderDetails,
+      total_amount: totalAmount
+    };
+
+    emailjs.send("service_8qrjwza", "template_7o8tt3g", templateParams)
+      .then(() => {
+        alert("Thank you! Your order has been placed.");
+        cart = [];
+        document.getElementById("cart-count").textContent = 0;
+        document.getElementById("checkout").style.display = "none";
+      })
+      .catch((err) => alert("Order failed: " + err.text));
+  };
+</script>
 
     let cart = [];
 
