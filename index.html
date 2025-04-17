@@ -166,26 +166,23 @@
     <p>© 2025 EnchantedTrinklet. All rights reserved.</p>
   </footer>
 
-  <script type="module">
-    import emailjs from 'https://cdn.emailjs.com/dist/email.min.mjs';
-
-    emailjs.init("bXNcwcq7RgwHcFkIP"); // ✅ your EmailJS user ID
+  <script src="https://cdn.emailjs.com/dist/email.min.js"></script>
+  <script>
+    emailjs.init("bXNcwcq7RgwHcFkIP");
 
     let cart = [];
 
-    // 📨 Order form submission
+    // Order form submission with cart details
     document.getElementById("order-form").addEventListener("submit", function (event) {
       event.preventDefault();
-      sendOrder();
-    });
 
-    function sendOrder() {
       const customerName = document.querySelector('input[name="user_name"]').value;
       const customerEmail = document.querySelector('input[name="user_email"]').value;
       const shippingAddress = document.querySelector('textarea[name="shipping_address"]').value;
       const orderDetails = cart.map(item => `${item.name} - $${item.price.toFixed(2)}`).join("\n");
       const totalAmount = cart.reduce((total, item) => total + item.price, 0).toFixed(2);
 
+      // EmailJS template parameters
       const templateParams = {
         user_name: customerName,
         user_email: customerEmail,
@@ -194,20 +191,22 @@
         total_amount: totalAmount
       };
 
+      // Send order via EmailJS
       emailjs.send("service_8qrjwza", "template_7o8tt3g", templateParams)
         .then(() => {
           alert("Thank you! Your order has been placed.");
-          cart = [];
+          cart = []; // Clear cart after order
           document.getElementById("cart-count").textContent = 0;
           document.getElementById("checkout").style.display = "none";
         })
         .catch((err) => alert("Order failed: " + err.text));
-    }
+    });
 
     function addToCart(name, price) {
       cart.push({ name, price });
       document.getElementById('cart-count').textContent = cart.length;
-      alert(name + ' added to cart!');
+      alert(name + ' has been added to your cart!');
+      updateCart(); // Update cart when an item is added
     }
 
     function toggleCart() {
@@ -215,12 +214,12 @@
       const checkoutDiv = document.getElementById('checkout');
       cartDiv.style.display = (cartDiv.style.display === 'none' || cartDiv.style.display === '') ? 'block' : 'none';
       checkoutDiv.style.display = 'none';
-      updateCart();
+      updateCart(); // Ensure cart content is updated when toggling
     }
 
     function updateCart() {
       const cartList = document.getElementById('cart-items');
-      cartList.innerHTML = '';
+      cartList.innerHTML = ''; // Clear the existing cart list
       cart.forEach(item => {
         const li = document.createElement('li');
         li.textContent = `${item.name} - $${item.price.toFixed(2)}`;
