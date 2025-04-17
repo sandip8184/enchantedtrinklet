@@ -158,7 +158,6 @@
       <input type="email" name="user_email" placeholder="Your Email" required />
       <textarea name="shipping_address" placeholder="Shipping Address" required></textarea>
       <textarea name="order_details" id="order-details" hidden></textarea>
-      <input type="hidden" name="total_amount" id="total-amount" />
       <button type="submit">Place Order</button>
     </form>
   </div>
@@ -173,15 +172,9 @@
       emailjs.init("7zW-r2ig6AjlS0dBy");
     })();
 
-    // Contact form
-    document.getElementById("contact-form").addEventListener("submit", function (event) {
-      event.preventDefault();
-      emailjs.sendForm("service_8qrjwza", "template_7o8tt3g", this)
-        .then(() => alert("Message sent successfully!"))
-        .catch((err) => alert("Failed to send message: " + err.text));
-    });
+    let cart = [];
 
-    // Order form
+    // Order form submission with cart details
     document.getElementById("order-form").addEventListener("submit", function (event) {
       event.preventDefault();
 
@@ -191,21 +184,25 @@
       const orderDetails = cart.map(item => `${item.name} - $${item.price.toFixed(2)}`).join("\n");
       const totalAmount = cart.reduce((total, item) => total + item.price, 0).toFixed(2);
 
-      // Fill hidden fields
-      document.getElementById("order-details").value = orderDetails;
-      document.getElementById("total-amount").value = totalAmount;
+      // EmailJS template parameters
+      const templateParams = {
+        user_name: customerName,
+        user_email: customerEmail,
+        shipping_address: shippingAddress,
+        order_details: orderDetails,
+        total_amount: totalAmount
+      };
 
-      emailjs.sendForm("service_8qrjwza", "template_7o8tt3g", this)
+      // Send order via EmailJS
+      emailjs.send("service_8qrjwza", "template_7o8tt3g", templateParams)
         .then(() => {
           alert("Thank you! Your order has been placed.");
-          cart = [];
+          cart = []; // Clear cart after order
           document.getElementById("cart-count").textContent = 0;
           document.getElementById("checkout").style.display = "none";
         })
         .catch((err) => alert("Order failed: " + err.text));
     });
-
-    let cart = [];
 
     function addToCart(name, price) {
       cart.push({ name, price });
