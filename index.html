@@ -166,11 +166,10 @@
     <p>© 2025 EnchantedTrinklet. All rights reserved.</p>
   </footer>
 
-  <script src="https://cdn.emailjs.com/dist/email.min.js"></script>
-  <script>
-    (function () {
-      emailjs.init("bXNcwcq7RgwHcFkIP");
-    })();
+  <script type="module">
+    import emailjs from 'https://cdn.emailjs.com/sdk/3.11.0/email.min.mjs';
+
+    emailjs.init("bXNcwcq7RgwHcFkIP");
 
     let cart = [];
 
