@@ -1,81 +1,10 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>EnchantedTrinklet - Handmade Bracelets</title>
   <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@400;600&family=Pacifico&display=swap" rel="stylesheet">
-  <script src="https://cdn.emailjs.com/dist/email.min.latest.js"></script> <!-- Updated version -->
-  <script>
-    // Initialize EmailJS with your user ID
-    (function() {
-      emailjs.init("7zW-r2ig6AjlS0dBy"); // Replace with your EmailJS user ID
-    })();
-
-    let cart = [];
-
-    // Add item to cart
-    function addToCart(name, price) {
-      cart.push({ name, price });
-      document.getElementById('cart-count').textContent = cart.length;
-      alert(name + ' added to cart!');
-    }
-
-    // Toggle cart visibility
-    function toggleCart() {
-      const cartDiv = document.getElementById('cart');
-      const checkoutDiv = document.getElementById('checkout');
-      cartDiv.style.display = (cartDiv.style.display === 'none' || cartDiv.style.display === '') ? 'block' : 'none';
-      checkoutDiv.style.display = 'none';
-      updateCart();
-    }
-
-    // Update cart display
-    function updateCart() {
-      const cartList = document.getElementById('cart-items');
-      cartList.innerHTML = '';
-      cart.forEach(item => {
-        const li = document.createElement('li');
-        li.textContent = `${item.name} - $${item.price.toFixed(2)}`;
-        cartList.appendChild(li);
-      });
-    }
-
-    // Checkout process
-    function checkout() {
-      document.getElementById('cart').style.display = 'none';
-      document.getElementById('checkout').style.display = 'block';
-    }
-
-    // Handle order form submission
-    document.getElementById("order-form").addEventListener("submit", function(event) {
-      event.preventDefault();
-
-      const customerName = document.querySelector('input[name="user_name"]').value;
-      const customerEmail = document.querySelector('input[name="user_email"]').value;
-      const shippingAddress = document.querySelector('textarea[name="shipping_address"]').value;
-      const orderDetails = cart.map(item => `${item.name} - $${item.price.toFixed(2)}`).join("\n");
-      const totalAmount = cart.reduce((total, item) => total + item.price, 0).toFixed(2);
-
-      const templateParams = {
-        user_name: customerName,
-        user_email: customerEmail,
-        shipping_address: shippingAddress,
-        order_details: orderDetails,
-        total_amount: totalAmount,
-        orders: cart
-      };
-
-      emailjs.send("service_8qrjwza", "template_7o8tt3g", templateParams)
-        .then(function(response) {
-          alert("Thank you! Your order has been placed.");
-          cart = [];
-          updateCart();
-        }, function(error) {
-          alert("Order failed: " + error.text);
-        });
-    });
-  </script>
   <style>
     body {
       font-family: 'Quicksand', sans-serif;
@@ -236,6 +165,89 @@
   <footer>
     <p>© 2025 EnchantedTrinklet. All rights reserved.</p>
   </footer>
+
+  <script src="https://cdn.emailjs.com/dist/email.min.js"></script>
+  <script>
+    (function () {
+      emailjs.init("7zW-r2ig6AjlS0dBy"); // This is the API Key used as User ID
+    })();
+
+    // Contact form submission
+    document.getElementById("contact-form").addEventListener("submit", function (event) {
+      event.preventDefault();
+      emailjs.sendForm("service_8qrjwza", "template_7o8tt3g", this)
+        .then(() => alert("Message sent successfully!"))
+        .catch((err) => alert("Failed to send message: " + err.text));
+    });
+
+    // Order form submission with cart details
+    document.getElementById("order-form").addEventListener("submit", function (event) {
+      event.preventDefault();
+
+      const customerName = document.querySelector('input[name="user_name"]').value;
+      const customerEmail = document.querySelector('input[name="user_email"]').value;
+      const shippingAddress = document.querySelector('textarea[name="shipping_address"]').value;
+      const orderDetails = cart.map(item => `${item.name} - $${item.price.toFixed(2)}`).join("\n");
+      const totalAmount = cart.reduce((total, item) => total + item.price, 0).toFixed(2);
+
+      // Create message content
+      const message = `
+        New Order:
+        Name: ${customerName}
+        Email: ${customerEmail}
+        Shipping Address: ${shippingAddress}
+        Items:
+        ${orderDetails}
+        Total Amount: $${totalAmount}
+      `;
+
+      // Send order via EmailJS
+      emailjs.send("service_8qrjwza", "template_7o8tt3g", {
+        user_name: customerName,
+        user_email: customerEmail,
+        shipping_address: shippingAddress,
+        message: message
+      })
+      .then(() => {
+        alert("Thank you! Your order has been placed.");
+        cart = []; // Clear cart after order
+        document.getElementById("cart-count").textContent = 0;
+        document.getElementById("checkout").style.display = "none";
+      })
+      .catch((err) => alert("Order failed: " + err.text));
+    });
+
+    let cart = [];
+
+    function addToCart(name, price) {
+      cart.push({ name, price });
+      document.getElementById('cart-count').textContent = cart.length;
+      alert(name + ' added to cart!');
+    }
+
+    function toggleCart() {
+      const cartDiv = document.getElementById('cart');
+      const checkoutDiv = document.getElementById('checkout');
+      cartDiv.style.display = (cartDiv.style.display === 'none' || cartDiv.style.display === '') ? 'block' : 'none';
+      checkoutDiv.style.display = 'none';
+      updateCart();
+    }
+
+    function updateCart() {
+      const cartList = document.getElementById('cart-items');
+      cartList.innerHTML = '';
+      cart.forEach(item => {
+        const li = document.createElement('li');
+        li.textContent = `${item.name} - $${item.price.toFixed(2)}`;
+        cartList.appendChild(li);
+      });
+    }
+
+    function checkout() {
+      document.getElementById('cart').style.display = 'none';
+      document.getElementById('checkout').style.display = 'block';
+    }
+  </script>
 
 </body>
 </html>
