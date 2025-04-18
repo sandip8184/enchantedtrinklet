@@ -166,8 +166,9 @@
     <p>© 2025 EnchantedTrinklet. All rights reserved.</p>
   </footer>
 
-  <!-- Load EmailJS and Cart Script -->
+  <!-- JS Libraries -->
   <script src="https://cdn.emailjs.com/sdk/3.11.0/email.min.js"></script>
+
   <script>
     emailjs.init("bXNcwcq7RgwHcFkIP");
 
@@ -190,6 +191,7 @@
     function checkout() {
       document.getElementById('cart').style.display = 'none';
       document.getElementById('checkout').style.display = 'block';
+      document.getElementById('order-details').value = cart.map(item => `${item.name} - $${item.price.toFixed(2)}`).join('\n');
     }
 
     function updateCart() {
