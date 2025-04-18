@@ -211,8 +211,8 @@
       const totalAmount = cart.reduce((total, item) => total + item.price, 0).toFixed(2);
 
       const templateParams = {
-        user_name: customerName,
-        user_email: customerEmail,
+        user_name: userName,
+        user_email: userEmail,
         shipping_address: shippingAddress,
         order_details: orderDetails,
         total_amount: totalAmount
