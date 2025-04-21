@@ -211,12 +211,13 @@
       const totalAmount = cart.reduce((total, item) => total + item.price, 0).toFixed(2);
 
       const templateParams = {
-        user_name: customerName,
-        user_email: customerEmail,
-        shipping_address: shippingAddress,
-        order_details: orderDetails,
-        total_amount: totalAmount
-      };
+  user_name: customerName,
+  user_email: customerEmail,
+  shipping_address: shippingAddress,
+  order_details: orderDetails,
+  total_amount: totalAmount,
+  order_date: new Date().toLocaleString()
+};
 
       emailjs.send("service_8qrjwza", "template_7o8tt3g", templateParams)
         .then(() => {
